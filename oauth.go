@@ -64,3 +64,21 @@ func GetOAuthResponseContext(ctx context.Context, clientID, clientSecret, code, 
 	}
 	return response, nil
 }
+
+func GetV2OAuthResponseContext(ctx context.Context, clientID, clientSecret, code, redirectURI string, debug bool) (resp *OAuthResponse, err error) {
+	values := url.Values{
+		"client_id":     {clientID},
+		"client_secret": {clientSecret},
+		"code":          {code},
+		"redirect_uri":  {redirectURI},
+	}
+	response := &OAuthResponse{}
+	err = post(ctx, "oauth.v2.access", values, response, debug)
+	if err != nil {
+		return nil, err
+	}
+	if !response.Ok {
+		return nil, errors.New(response.Error)
+	}
+	return response, nil
+}
