@@ -29,7 +29,7 @@ type OAuthResponse struct {
 	SlackResponse
 }
 
-type OAuthV2Response struct {
+type V2OAuthResponse struct {
 	Ok          bool   `json:"ok"`
   Error       string `json:"error"`
 	AccessToken string `json:"access_token"`
@@ -71,6 +71,10 @@ func GetOAuthResponse(clientID, clientSecret, code, redirectURI string, debug bo
 	return GetOAuthResponseContext(context.Background(), clientID, clientSecret, code, redirectURI, debug)
 }
 
+func GetV2OAuthResponse(clientID, clientSecret, code, redirectURI string, debug bool) (resp *V2OAuthResponse, err error) {
+	return GetV2OAuthResponseContext(context.Background(), clientID, clientSecret, code, redirectURI, debug)
+}
+
 func GetOAuthResponseContext(ctx context.Context, clientID, clientSecret, code, redirectURI string, debug bool) (resp *OAuthResponse, err error) {
 	values := url.Values{
 		"client_id":     {clientID},
@@ -89,14 +93,14 @@ func GetOAuthResponseContext(ctx context.Context, clientID, clientSecret, code, 
 	return response, nil
 }
 
-func GetV2OAuthResponseContext(ctx context.Context, clientID, clientSecret, code, redirectURI string, debug bool) (resp *OAuthV2Response, err error) {
+func GetV2OAuthResponseContext(ctx context.Context, clientID, clientSecret, code, redirectURI string, debug bool) (resp *V2OAuthResponse, err error) {
 	values := url.Values{
 		"client_id":     {clientID},
 		"client_secret": {clientSecret},
 		"code":          {code},
 		"redirect_uri":  {redirectURI},
 	}
-	response := &OAuthV2Response{}
+	response := &V2OAuthResponse{}
 	err = post(ctx, "oauth.v2.access", values, response, debug)
 	if err != nil {
 		return nil, err
